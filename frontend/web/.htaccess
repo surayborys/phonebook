@@ -1,0 +1,7 @@
+RewriteEngine on
+
+    # if requested in URL file or directory exists - call to it directly
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    # if not - rewrite request to index.php
+    RewriteRule . index.php
