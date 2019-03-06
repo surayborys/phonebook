@@ -11,19 +11,22 @@ use yii\web\IdentityInterface;
  * User model
  *
  * @property integer $id
- * @property string $username
+ * @property string $name
+ * @property string $patronymic
+ * @property string $surname
+ * @property integer $phone
  * @property string $password_hash
  * @property string $password_reset_token
- * @property string $email
+ * @property string $photo
+ * @property string $birthdate
  * @property string $auth_key
  * @property integer $status
- * @property integer $created_at
- * @property integer $updated_at
- * @property string $password write-only password
+ * @property integer role_id
+ * @property string $password write-only 
  */
 class User extends ActiveRecord implements IdentityInterface
 {
-    const STATUS_DELETED = 0;
+    const STATUS_NON_ACTIVE = 0;
     const STATUS_ACTIVE = 10;
 
 
@@ -38,12 +41,12 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    /*public function behaviors()
     {
         return [
             TimestampBehavior::className(),
         ];
-    }
+    }*/
 
     /**
      * {@inheritdoc}
@@ -52,7 +55,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_NON_ACTIVE]],
         ];
     }
 
@@ -73,14 +76,14 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Finds user by username
+     * Finds user by phone number
      *
-     * @param string $username
+     * @param string $phone
      * @return static|null
      */
-    public static function findByUsername($username)
+    public static function findByPhone($phone)
     {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['phone' => $phone, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
