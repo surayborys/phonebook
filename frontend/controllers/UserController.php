@@ -1,4 +1,5 @@
 <?php
+
 namespace frontend\controllers;
 
 use Yii;
@@ -11,15 +12,15 @@ use frontend\models\LoginForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
-use frontend\models\Abonent;
-use yii\data\ActiveDataProvider;
-use yii\helpers\Url;
+
 
 /**
- * Site controller
+ * Description of UserController
+ *
+ * @author suray
  */
-class SiteController extends Controller
-{
+class UserController extends Controller{
+    
     /**
      * {@inheritdoc}
      */
@@ -66,34 +67,7 @@ class SiteController extends Controller
             ],
         ];
     }
-
-    /**
-     * Displays homepage.
-     *
-     * @return mixed
-     */
-    public function actionIndex()
-    {
-        if (Yii::$app->user->isGuest) {
-            return $this->redirect(Url::to('/user/login'));
-        }
-        
-        $currentUser = Yii::$app->user->identity;
-        $userID = Yii::$app->user->id;
-        
-        $dataProvider = new ActiveDataProvider([
-            'query' => Abonent::find()->where(['user_id' => $userID]),
-        ]);
-        $groups = $currentUser->getGroups();
-        
-        return $this->render('index', [
-            'currentUser' => $currentUser,
-            'dataProvider' => $dataProvider,
-            'groups' => $groups,
-        ]);
-    }
-
-    /**
+     /**
      * Logs in a user.
      *
      * @return mixed

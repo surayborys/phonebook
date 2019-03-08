@@ -1,11 +1,13 @@
 <?php
-namespace common\models;
+namespace frontend\models;
 
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use frontend\models\Group;
+use frontend\models\Abonent;
 
 /**
  * User model
@@ -188,5 +190,29 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+    
+    /**
+     * get linked data for the User $this in the 'abonent' table
+     * <p>User has many abonents (frontend\models\Abonent) </p>
+     * 
+     * @return array[] frontend\models\Abonent
+     */
+    public function getAbonents()
+    {
+        $order = ['id' => SORT_DESC];
+        return $this->hasMany(Abonent::className(), ['user_id' => 'id'])->orderBy($order)->all();
+    }
+    
+    /**
+     * get linked data for the User $this in the 'group' table
+     * <p>User has many groups (frontend\models\Group) </p>
+     * 
+     * @return array[] frontend\models\Group
+     */
+    public function getGroups()
+    {
+        $order = ['id' => SORT_DESC];
+        return $this->hasMany(Group::className(), ['user_id' => 'id'])->orderBy($order)->all();
     }
 }
