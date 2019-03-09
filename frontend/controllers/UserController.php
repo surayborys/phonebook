@@ -12,6 +12,7 @@ use frontend\models\LoginForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
+use frontend\models\User;
 
 
 /**
@@ -29,7 +30,7 @@ class UserController extends Controller{
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'signup'],
+                'only' => ['logout', 'signup', 'update', 'view'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -37,7 +38,7 @@ class UserController extends Controller{
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['logout', 'update', 'view', 'update'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -168,6 +169,66 @@ class UserController extends Controller{
         }
 
         return $this->render('resetPassword', [
+            'model' => $model,
+        ]);
+    }
+    
+    /**
+     * Finds the user model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return user the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = User::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    
+    /**
+     * Displays a single user model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionView()
+    {
+        if(Yii::$app->user->isGuest){
+            return $this->redirect(['login']);
+        }
+        
+        $id = Yii::$app->user->id;
+        
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
+    }
+    
+    /**
+     * Updates an existing user model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionUpdate()
+    {
+        if(Yii::$app->user->isGuest){
+            return $this->redirect(['login']);
+        }
+        
+        $id = Yii::$app->user->id;
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        return $this->render('_form', [
             'model' => $model,
         ]);
     }

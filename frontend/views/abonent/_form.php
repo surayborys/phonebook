@@ -18,21 +18,19 @@ use frontend\models\Group;
     <?php $form = ActiveForm::begin(); ?>
 
     <!--user_id input field is hidden-->
-    <?= $form->field($model, 'user_id')->hiddenInput(['value'=> $curUserId])->label('') ?>
-
-    <?= $form->field($model, 'group_id')->dropDownList(ArrayHelper::map(Group::findAll(['user_id'=>$curUserId]),'id', 'title'), ['prompt' => '--no group--'])->label('Group') ?>
+    <?= $form->field($model, 'user_id')->hiddenInput(['value'=> $curUserId])->label(false) ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'patronymic')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'surname')->textInput(['maxlength' => true]) ?>
+    
+    <?= $form->field($model, 'group_id')->dropDownList(ArrayHelper::map(Group::findAll(['user_id'=>$curUserId]),'id', 'title'), ['prompt' => '--no group--'])->label('Group') ?>
 
     <?= $form->field($model, 'phone')->widget(MaskedInput::className(), [
                     'mask' => '380(99)999-99-99',
                 ]) ?>
-
-    <?= $form->field($model, 'photo')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'birthdate')->widget(
                     DatePicker::className(), [

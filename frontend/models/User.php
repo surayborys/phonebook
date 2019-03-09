@@ -58,6 +58,25 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_NON_ACTIVE]],
+            
+            ['name', 'trim'],
+            ['name', 'required'],
+            ['name', 'string', 'min' => 2, 'max' => 255],
+            
+            ['patronymic', 'trim'],
+            ['patronymic', 'required'],
+            ['patronymic', 'string', 'min' => 2, 'max' => 255],
+            
+            ['surname', 'trim'],
+            ['surname', 'required'],
+            ['surname', 'string', 'min' => 2, 'max' => 255],
+
+            ['phone', 'trim'],
+            ['phone', 'required'],
+            ['phone', 'string'],
+            ['phone', 'unique', 'targetClass' => '\frontend\models\User', 'message' => 'This phone number has already been taken.'],
+            
+            ['birthdate', 'date', 'format' => 'php:Y-m-d'],
         ];
     }
 

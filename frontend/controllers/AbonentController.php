@@ -9,6 +9,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
+use frontend\models\UploadForm;
+use yii\web\UploadedFile;
 
 /**
  * AbonentController implements the CRUD actions for Abonent model.
@@ -48,7 +50,14 @@ class AbonentController extends Controller
         //check if the $group_id param is passed to the action and customize WHERE condition depends on it
         $condition = ($group_id == false) ? ['user_id' => $userID] : ['user_id' => $userID, 'group_id' => $group_id];
         $query = Abonent::find()->where($condition);
-        $dataProvider = new ActiveDataProvider(['query' => $query]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 9,
+            ],
+        ]);
+        
+        
         
         return $this->render('index', [
             'currentUser' => $currentUser,
@@ -157,5 +166,76 @@ class AbonentController extends Controller
         if($user_id != Yii::$app->user->id){
             return $this->redirect(['index']);
         }
+    }
+    
+    /**
+     * handles picture uploading 
+     * 
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionUpload($id)
+    {
+         if (Yii::$app->user->isGuest) {
+            return $this->redirect(Url::to('/user/login'));
+        }
+        
+        $abonent = $this->findModel($id);
+        if(isset($abonent->photo) & !empty($abonent->photo)){
+            $oldPhoto = $abonent->photo;
+        }
+        
+        $model = new UploadForm();
+
+        if (Yii::$app->request->isPost) {
+            $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+            if ($photo = $model->upload(Yii::$app->user->id, $id)) {
+                // file is uploaded successfully
+                $abonent->photo = $photo;
+                if($abonent->save()&& isset($oldPhoto)) {
+                    $this->deleteFile($oldPhoto);
+                }
+                return $this->redirect(['abonent/view', 'id'=>$id]);
+            }
+        }
+
+        return $this->render('upload', ['model' => $model]);
+    }
+    
+    /**
+     * deletes abonent's photo
+     * 
+     * @param type $id
+     * @return type
+     */
+    public function actionRemovePhoto($id){
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(Url::to('/user/login'));
+        }
+        
+        $abonent = $this->findModel($id);
+        if(isset($abonent->photo) & !empty($abonent->photo)){
+            $this->deleteFile($abonent->photo);
+            $abonent->photo = '';
+            $abonent->save();
+        }
+        return $this->redirect(['abonent/view', 'id'=>$id]);
+    }
+
+
+    /**
+     * deletes file
+     * 
+     * @param type $file
+     * @return boolean
+     */
+    protected function deleteFile(string $file) {
+        
+        $filename = '/' . $file;
+        
+        if(file_exists($filename)) {
+            return unlink($filename);
+        }
+        return true;
     }
 }

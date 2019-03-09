@@ -1,4 +1,4 @@
-<?php
+ <?php
 /* @var $this yii\web\View */
 /* @var $currentUser frontend\models\User */
 /* @var $abonents[] frontend\model\Abonent */
@@ -40,25 +40,41 @@ $this->title = 'Phone Book';
         <div class="col-md-10">
             <div class="abonent-index">
 
-                <h3><span class="glyphicon glyphicon-user"></span>&nbsp;Contacts</h3>
-
-                <p>
-                    <?= Html::a('Add new contact', ['create'], ['class' => 'btn btn-default']) ?>
-                </p>
+                <h3><span class="glyphicon glyphicon-user"></span>&nbsp;Contacts
+                 <?= Html::a('<span class="glyphicon glyphicon-plus"></span>&nbsp;Add contact', ['create'], ['class' => 'btn btn-primary']) ?>
+                </h3>
+                
+                   
+                
 
                 <?=
                 GridView::widget([
                     'dataProvider' => $dataProvider,
                     'columns' => [
                         ['class' => 'yii\grid\SerialColumn'],
-                        'id',
-                        'user_id',
-                        'group_id',
+                        //'id',
+                        //'user_id',
+                        //'group_id',
+                        [
+                            'format' => 'html',
+                            'value' => function($data) {
+                                return Html::img($data->getPhoto(),[
+                                    'width' => '50px',
+                                ]);
+                            }
+                        ],
                         'name',
                         'patronymic',
                         'surname',
                         'phone',
-                        'photo',
+                        [
+                            'attribute' => 'group',
+                            'format' => 'html',
+                            'value' => function($ab) {
+                                return ($ab->getGroupTitle()) ? $ab->getGroupTitle() : 'no group';
+                            }
+                        ],
+                        //'photo',
                         'birthdate',
                         ['class' => 'yii\grid\ActionColumn'],
                     ],

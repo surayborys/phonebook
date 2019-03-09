@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use Yii;
+use frontend\models\Group;
 
 /**
  * This is the model class for table "abonent".
@@ -70,7 +71,31 @@ class Abonent extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
     
+    /**
+     *  sets fullname property for the user
+     */
     public function setFullName() {
         $this->fullname = $this->name . ' ' . $this->surname . ' ' . $this->phone;
+    }
+    
+    /**
+     * gets group title from the {{%group}} table by group_id
+     * 
+     * @return boolean|string
+     */
+    public function getGroupTitle() {
+        if(isset($this->group_id) && !empty($this->group_id)) {
+            $group = Group::findOne(['id' => $this->group_id]);
+            $title = $group->title;
+            return $title;
+        }
+        return false;
+    }
+    
+    public function getPhoto() {
+        if(isset($this->photo) && !empty($this->photo)) {
+            return Yii::getAlias('@web'). '/' . $this->photo;
+        }
+        return Yii::$app->params['defaultProfileImage'];
     }
 }

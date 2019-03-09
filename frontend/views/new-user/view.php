@@ -4,21 +4,18 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model frontend\models\Abonent */
+/* @var $model frontend\models\user */
 
 $this->title = $model->name;
+$this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="abonent-view">
+<div class="user-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <img src="<?= $model->getPhoto()?>" alt="abonent-photo" style="width: 100px">
-    <hr>
-    
+
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Change photo', ['upload', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Remove photo', ['remove-photo', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -32,21 +29,17 @@ $this->title = $model->name;
         'model' => $model,
         'attributes' => [
             'id',
-            //'user_id',
-            //'group_id',
-            [
-                'attribute' => 'group',
-                'format' => 'html',
-                'value' => function($ab) {
-                    return ($ab->getGroupTitle()) ? $ab->getGroupTitle() : 'no group';
-                }
-            ],
             'name',
             'patronymic',
             'surname',
             'phone',
-            //'photo',
+            //'password_hash',
+            //'password_reset_token',
+            'photo',
             'birthdate',
+            //'status',
+            //'role_id',
+            //'auth_key',
         ],
     ]) ?>
 
