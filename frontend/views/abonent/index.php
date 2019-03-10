@@ -1,6 +1,7 @@
  <?php
 /* @var $this yii\web\View */
 /* @var $currentUser frontend\models\User */
+/* @var $SearchForm frontend\models\SearchForm */
 /* @var $abonents[] frontend\model\Abonent */
 /* @var $groups[] frontend\model\Group */
 use yii\grid\GridView;
@@ -40,12 +41,15 @@ $this->title = 'Phone Book';
         <div class="col-md-10">
             <div class="abonent-index">
 
-                <h3><span class="glyphicon glyphicon-user"></span>&nbsp;Contacts
+                <h3><span class="glyphicon glyphicon-user"></span>&nbsp;Contacts   
                  <?= Html::a('<span class="glyphicon glyphicon-plus"></span>&nbsp;Add contact', ['create'], ['class' => 'btn btn-primary']) ?>
                 </h3>
                 
+                <form class="form form-inline form-group">
+                    <input class="form-control" type="text" name = "fullname" id="fullname_ID" placeholder="type to cearch">
+                    <a class="btn btn-default"><span class="glyphicon glyphicon-search"></span></a>
+                </form>
                    
-                
 
                 <?=
                 GridView::widget([

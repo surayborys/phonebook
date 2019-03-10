@@ -43,6 +43,7 @@ return [
                 '/' => 'abonent/index',
                 #'user/login' => 'user/login',
                 '/abonent/index/<group_id:\w+>' => 'abonent/index',
+                '/abonent/index/<group_id:\w+>/<search_condition:\w+>' => 'abonent/index',
                 '/group/addcontacts/<id:\w+>' => 'group/addcontacts',
                 '/group/removecontacts/<id:\w+>' => 'group/removecontacts',
             ],

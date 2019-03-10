@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use frontend\models\UploadForm;
 use yii\web\UploadedFile;
+use frontend\models\SearchForm;
 
 /**
  * AbonentController implements the CRUD actions for Abonent model.
@@ -36,7 +37,7 @@ class AbonentController extends Controller
      * Lists all Abonent models.
      * @return mixed
      */
-    public function actionIndex($group_id = false)
+    public function actionIndex($group_id = false, $search_condition = false)
     {
         if (Yii::$app->user->isGuest) {
             return $this->redirect(Url::to('/user/login'));
@@ -46,10 +47,14 @@ class AbonentController extends Controller
         $userID = Yii::$app->user->id;
         
         $groups = $currentUser->getGroups();
-        
+        //check if the search_condition is 
+        if($search_condition != false) {
+            $query = $this->getQuery($search_condition);
+        } else {
+            $condition = ($group_id == false) ? ['user_id' => $userID] : ['user_id' => $userID, 'group_id' => $group_id];
+            $query = Abonent::find()->where($condition);
+        }
         //check if the $group_id param is passed to the action and customize WHERE condition depends on it
-        $condition = ($group_id == false) ? ['user_id' => $userID] : ['user_id' => $userID, 'group_id' => $group_id];
-        $query = Abonent::find()->where($condition);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -237,5 +242,17 @@ class AbonentController extends Controller
             return unlink($filename);
         }
         return true;
+    }
+    
+    
+    protected function getQuery($keyword){
+        
+        $model = new SearchForm();
+        $model->keyword = $this->keyword;
+        
+        $result = $model->test();
+        
+        return $result;
+        
     }
 }
