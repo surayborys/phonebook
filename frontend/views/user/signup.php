@@ -7,6 +7,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\widgets\MaskedInput;
+use frontend\models\User;
 
 $this->title = 'Signup';
 $this->params['breadcrumbs'][] = $this->title;
@@ -31,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]) ?>
 
                 <?= $form->field($model, 'password')->passwordInput() ?>
+                <?= $form->field($model, 'role_id')->hiddenInput(['value'=>User::DEFAULT_USER_ROLE_ID]) ?>
 
                 <div class="form-group">
                     <?= Html::submitButton('Signup', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>

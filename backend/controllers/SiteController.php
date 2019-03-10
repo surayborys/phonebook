@@ -5,7 +5,8 @@ use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use common\models\LoginForm;
+use backend\models\LoginForm;
+use yii\helpers\Url;
 
 /**
  * Site controller
@@ -20,15 +21,20 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
+                'denyCallback' => function($rule, $action) {
+                            Yii::$app->session->setFlash('danger','Access denied...');
+                            return $this->goHome();
+                        },
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['login', 'index'],
                         'allow' => true,
+                        'roles' => ['?'],
                     ],
                     [
                         'actions' => ['logout', 'index'],
                         'allow' => true,
-                        'roles' => ['@'],
+                        'roles' => ['@', 'admin', 'moderator'],
                     ],
                 ],
             ],

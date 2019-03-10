@@ -1,11 +1,11 @@
 <?php
-
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $model \common\models\LoginForm */
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\widgets\MaskedInput;
 
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
@@ -19,17 +19,25 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-5">
             <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
 
-                <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+            <?=
+                $form->field($model, 'phone')->widget(MaskedInput::className(), [
+                    'mask' => '380(99)999-99-99',
+                ])->textInput(['autofocus' => true])
+            ?>
 
-                <?= $form->field($model, 'password')->passwordInput() ?>
+            <?= $form->field($model, 'password')->passwordInput() ?>
 
-                <?= $form->field($model, 'rememberMe')->checkbox() ?>
+            <?= $form->field($model, 'rememberMe')->checkbox() ?>
 
-                <div class="form-group">
-                    <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
-                </div>
+            <div style="color:#999;margin:1em 0">
+                If you forgot your password you can <?= Html::a('reset it', ['site/request-password-reset']) ?>.
+            </div>
 
-            <?php ActiveForm::end(); ?>
+            <div class="form-group">
+<?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+            </div>
+
+<?php ActiveForm::end(); ?>
         </div>
     </div>
 </div>

@@ -1,8 +1,8 @@
 <?php
-namespace frontend\models;
+namespace backend\models;
 
 use yii\base\Model;
-use frontend\models\User;
+use backend\models\User;
 
 /**
  * Signup form
@@ -14,14 +14,15 @@ class SignupForm extends Model
     public $surname;
     public $phone;
     public $password;
-
-
+    public $role_id;
+    
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
+                    
             ['name', 'trim'],
             ['name', 'required'],
             ['name', 'string', 'min' => 2, 'max' => 255],
@@ -52,7 +53,7 @@ class SignupForm extends Model
      *
      * @return User|null the saved model or null if saving fails
      */
-    public function signup()
+    public function save()
     {
         if (!$this->validate()) {
             return null;
@@ -63,6 +64,7 @@ class SignupForm extends Model
         $user->patronymic = $this->patronymic;
         $user->surname = $this->surname;
         $user->phone = $this->phone;
+        $user->role_id = $this->role_id;
         $user->setPassword($this->password);
         $user->generateAuthKey();
         

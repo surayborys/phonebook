@@ -1,5 +1,5 @@
 <?php
-namespace frontend\models;
+namespace backend\models;
 
 use Yii;
 use yii\base\NotSupportedException;
@@ -30,8 +30,51 @@ class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_NON_ACTIVE = 0;
     const STATUS_ACTIVE = 10;
-    
+
     const DEFAULT_USER_ROLE_ID = 0;
+    const USER_ADMIN_ROLE_ID = 1;
+    const USER_MODERATOR_ROLE_ID = 2;
+    
+    
+    //perform the saveRoles() method after inserting/updating of model
+    public function __construct() {
+        $this->on(self::EVENT_AFTER_INSERT, [$this, 'saveRoles']);
+        $this->on(self::EVENT_AFTER_UPDATE, [$this, 'saveRoles']);
+    }
+    
+    /**
+     * saves user roles with auth manager
+     */
+    public function saveRoles(){
+        
+        if(!$roleName = $this->getRoleName()) {
+            return false;
+        }
+        //clear previous role
+        Yii::$app->authManager->revokeAll($this->getId());
+        //check if current role exists and if yes assign it to user 
+        if($role = Yii::$app->authManager->getRole($roleName)){
+            Yii::$app->authManager->assign($role, $this->getId());
+        }
+    }
+    
+    /**
+     * returns the name of role by role_id
+     * 
+     * @return boolean|string
+     */
+    protected function getRoleName(){
+        switch ($this->role_id) {
+            case self::USER_ADMIN_ROLE_ID :
+                return 'admin';
+            case self::USER_MODERATOR_ROLE_ID :
+                return 'moderator';
+            case self::DEFAULT_USER_ROLE_ID :
+                return false;
+            default :
+                return false;
+        }
+    }
 
     /**
      * {@inheritdoc}
@@ -72,15 +115,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['surname', 'required'],
             ['surname', 'string', 'min' => 2, 'max' => 255],
 
-            ['phone', 'trim'],
-            ['phone', 'required'],
-            ['phone', 'string'],
-            ['phone', 'unique', 'targetClass' => '\frontend\models\User', 'message' => 'This phone number has already been taken.'],
-            
-            ['birthdate', 'date', 'format' => 'php:Y-m-d'],
-            
             ['role_id', 'required'],
-            ['role_id', 'integer']
         ];
     }
 
