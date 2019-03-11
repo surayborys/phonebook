@@ -12,6 +12,7 @@ use yii\helpers\Url;
 use frontend\models\UploadForm;
 use yii\web\UploadedFile;
 use yii\helpers\Html;
+use yii\filters\AccessControl;
 
 /**
  * AbonentController implements the CRUD actions for Abonent model.
@@ -30,6 +31,20 @@ class AbonentController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'denyCallback' => function($rule, $action) {
+                            Yii::$app->session->setFlash('danger','Login to continue...');
+                            return $this->redirect(Url::to(['/user/login']));
+                        },
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'upload', 'search', 'remove-photo'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -39,10 +54,6 @@ class AbonentController extends Controller
      */
     public function actionIndex($group_id = false)
     {
-        if (Yii::$app->user->isGuest) {
-            return $this->redirect(Url::to('/user/login'));
-        }
-        
         $currentUser = Yii::$app->user->identity;
         $userID = Yii::$app->user->id;
         
@@ -177,10 +188,7 @@ class AbonentController extends Controller
      */
     public function actionUpload($id)
     {
-         if (Yii::$app->user->isGuest) {
-            return $this->redirect(Url::to('/user/login'));
-        }
-        
+              
         $abonent = $this->findModel($id);
         if(isset($abonent->photo) & !empty($abonent->photo)){
             $oldPhoto = $abonent->photo;
@@ -210,10 +218,7 @@ class AbonentController extends Controller
      * @return type
      */
     public function actionRemovePhoto($id){
-        if (Yii::$app->user->isGuest) {
-            return $this->redirect(Url::to('/user/login'));
-        }
-        
+                
         $abonent = $this->findModel($id);
         if(isset($abonent->photo) & !empty($abonent->photo)){
             $this->deleteFile($abonent->photo);
@@ -246,10 +251,6 @@ class AbonentController extends Controller
      * @param $keyword
      */
     public function actionSearch(string $keyword) {
-        
-        if (Yii::$app->user->isGuest) {
-            return $this->redirect(Url::to('/user/login'));
-        }
         
         $currentUser = Yii::$app->user->identity;
         $userID = Yii::$app->user->id;

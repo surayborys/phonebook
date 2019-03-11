@@ -9,6 +9,8 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
+use yii\filters\AccessControl;
 
 /**
  * GroupController implements the CRUD actions for Group model.
@@ -27,6 +29,20 @@ class GroupController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'denyCallback' => function($rule, $action) {
+                            Yii::$app->session->setFlash('danger','Login to continue...');
+                            return $this->redirect(Url::to(['/user/login']));
+                        },
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'addcontacts', 'removecontacts'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -36,9 +52,6 @@ class GroupController extends Controller
      */
     public function actionIndex()
     {
-        if (Yii::$app->user->isGuest) {
-            return $this->redirect(Url::to('/user/login'));
-        }
         $dataProvider = new ActiveDataProvider([
             'query' => Group::find()->where(['user_id' => Yii::$app->user->id])
         ]);
