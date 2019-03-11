@@ -6,6 +6,7 @@
 /* @var $groups[] frontend\model\Group */
 use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\web\JqueryAsset;
 
 
 $this->title = 'Phone Book';
@@ -46,8 +47,9 @@ $this->title = 'Phone Book';
                 </h3>
                 
                 <form class="form form-inline form-group">
-                    <input class="form-control" type="text" name = "fullname" id="fullname_ID" placeholder="type to cearch">
-                    <a class="btn btn-default"><span class="glyphicon glyphicon-search"></span></a>
+                    <input class="form-control" type="text" name = "fullname"  placeholder="type to search" id="keyword">
+                    <a class="btn btn-default" id="search-id"><span class="glyphicon glyphicon-search"></span></a>
+                    <p class="text-danger" id="error-id"></p>
                 </form>
                    
 
@@ -89,3 +91,7 @@ $this->title = 'Phone Book';
 
     </div>
 </div>
+
+<?php $this->registerJsFile('@web/js/clickSearch.js', [
+    'depends' => JqueryAsset::className(),
+]); ?>

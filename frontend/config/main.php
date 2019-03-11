@@ -41,9 +41,8 @@ return [
             'showScriptName' => false,
             'rules' => [
                 '/' => 'abonent/index',
-                #'user/login' => 'user/login',
                 '/abonent/index/<group_id:\w+>' => 'abonent/index',
-                '/abonent/index/<group_id:\w+>/<search_condition:\w+>' => 'abonent/index',
+                '/abonent/search/<keyword:\w+>' => 'abonent/search',
                 '/group/addcontacts/<id:\w+>' => 'group/addcontacts',
                 '/group/removecontacts/<id:\w+>' => 'group/removecontacts',
             ],

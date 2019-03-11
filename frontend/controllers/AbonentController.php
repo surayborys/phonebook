@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use frontend\models\UploadForm;
 use yii\web\UploadedFile;
-use frontend\models\SearchForm;
+use yii\helpers\Html;
 
 /**
  * AbonentController implements the CRUD actions for Abonent model.
@@ -37,7 +37,7 @@ class AbonentController extends Controller
      * Lists all Abonent models.
      * @return mixed
      */
-    public function actionIndex($group_id = false, $search_condition = false)
+    public function actionIndex($group_id = false)
     {
         if (Yii::$app->user->isGuest) {
             return $this->redirect(Url::to('/user/login'));
@@ -47,14 +47,10 @@ class AbonentController extends Controller
         $userID = Yii::$app->user->id;
         
         $groups = $currentUser->getGroups();
-        //check if the search_condition is 
-        if($search_condition != false) {
-            $query = $this->getQuery($search_condition);
-        } else {
-            $condition = ($group_id == false) ? ['user_id' => $userID] : ['user_id' => $userID, 'group_id' => $group_id];
-            $query = Abonent::find()->where($condition);
-        }
-        //check if the $group_id param is passed to the action and customize WHERE condition depends on it
+        //check if the $group_id param is passed to the action and customize WHERE condition depends on it            
+        $condition = ($group_id == false) ? ['user_id' => $userID] : ['user_id' => $userID, 'group_id' => $group_id];
+        $query = Abonent::find()->where($condition);
+                
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -244,15 +240,105 @@ class AbonentController extends Controller
         return true;
     }
     
+    /**
+     * performs search by keyword
+     * 
+     * @param $keyword
+     */
+    public function actionSearch(string $keyword) {
+        
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(Url::to('/user/login'));
+        }
+        
+        $currentUser = Yii::$app->user->identity;
+        $userID = Yii::$app->user->id;
+        $groups = $currentUser->getGroups();
+        
+        $keyword = Html::encode($keyword);
+        
+        $search_source = $this->determine_search_source($keyword);
+        
+        if($search_source == 'fullname') {
+            $query = Abonent::find()->where(['user_id' => $userID])->andfilterWhere(['like','concat(name, patronymic, surname)', $keyword]);
+        }
+        
+        if($search_source == 'phone') {
+            
+            /* 380(77)777-77-77 or 7)777-77-77 or 777-77-77 */
+            $phone = $this->prepareStandardNumber($keyword);
+            
+            $query = Abonent::find()->where(['user_id' => $userID])->andfilterWhere(['like', 'abonent.phone', $phone]);
+        }
+        
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 9,
+            ],
+        ]);
+        
+        return $this->render('index', [
+            'currentUser' => $currentUser,
+            'dataProvider' => $dataProvider,
+            'groups' => $groups,
+        ]);
+    }
     
-    protected function getQuery($keyword){
+    /**
+     * analyses keyword and determines the source for search
+     * 
+     * @param $keyword
+     * @return string
+     */
+    protected function determine_search_source(string $keyword){
         
-        $model = new SearchForm();
-        $model->keyword = $this->keyword;
+        /* 380677777777 has 12 symbols */
+        if(strlen($keyword) > 12) {
+            return 'fullname';
+        }
         
-        $result = $model->test();
+        /* check if the given keyword mathces with phone number */
+        $pattern_number = "~[0-9]{7,12}~";
         
-        return $result;
+        if(preg_match($pattern_number, $keyword))
+        {
+            return 'phone';
+        }
+        
+        //return fullname by default
+        return 'fullname';
+    }
+    
+    /**
+     * formats phone number according to database requirements
+     * 380(55)555-55-55
+     * 
+     * @param string $keyword
+     */
+    protected function prepareStandardNumber(string $keyword) {
+        
+        $length = strlen($keyword);
+        
+        switch ($length) {
+            case 7:
+                $keyword = substr_replace($keyword, '-', -2, 0); //now length is 8
+                $keyword = substr_replace($keyword, '-', -5, 0); //now length is 9
+                return $keyword;
+            
+            case ($length == 8 || $length == 9) :
+                $keyword = substr_replace($keyword, '-', -2, 0); //now length is 8
+                $keyword = substr_replace($keyword, '-', -5, 0); //now length is 9
+                $keyword = substr_replace($keyword, ')', -9, 0); //now length is 10
+                return $keyword;
+            case ( $length > 9) :
+                $keyword = substr_replace($keyword, '-', -2, 0); //now length is 8
+                $keyword = substr_replace($keyword, '-', -5, 0); //now length is 9
+                $keyword = substr_replace($keyword, ')', -9, 0); //now length is 10
+                $keyword = substr_replace($keyword, '(', -12, 0); //now length is 10
+                return $keyword;
+        }
+        
         
     }
 }

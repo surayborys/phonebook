@@ -16,9 +16,11 @@ $this->title = $model->name;
     <hr>
     
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        
         <?= Html::a('Change photo', ['upload', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
         <?= Html::a('Remove photo', ['remove-photo', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
+        <hr>
+        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
