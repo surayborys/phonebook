@@ -36,9 +36,10 @@ class m190310_181604_create_rbac_data extends Migration
             'role_id' => 1,
         ]);
         $user->generateAuthKey();
-        $user->save();
-        // Assign admin role to 
-        $auth->assign($adminRole, $user->getId());
+        if($user->save()){
+            // Assign admin role to 
+            $auth->assign($adminRole, $user->getId());
+        }
     }
     public function safeDown()
     {

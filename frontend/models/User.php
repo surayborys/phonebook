@@ -80,6 +80,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['birthdate', 'date', 'format' => 'php:Y-m-d'],
             
             ['role_id', 'required'],
+            ['role_id', 'safe'],
             ['role_id', 'integer']
         ];
     }
