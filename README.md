@@ -10,6 +10,7 @@ FUNCTIONALITY
 -------------------
 
 ```
+<p>
 frontend (available as your-domain.com)
 
    sign-up, update profile info
@@ -17,7 +18,8 @@ frontend (available as your-domain.com)
    upload and remove contact's photo
    create and manage groups
    perform search by name, by phone number
-
+</p>
+<p>
 backend (available as your-domain.com/admin)
     
 
@@ -49,3 +51,4 @@ backend (available as your-domain.com/admin)
     DELETING USER you delete all his groups (/fromtend/models/Group) and contacts (/frontend/models/Abonent), using FOREIGN KEY option ON DELETE CASCADE in DATABASE
     
     TO start using admin panel just log in your-site/admin and press the "MANAGE" button on the start page
+</p>
