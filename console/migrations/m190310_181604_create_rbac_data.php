@@ -1,6 +1,7 @@
 <?php
 
 use yii\db\Migration;
+use backend\models\SignupForm;
 use backend\models\User;
 
 /**
@@ -25,21 +26,17 @@ class m190310_181604_create_rbac_data extends Migration
         
         // Create admin user
         // After creating admin create new admin user with secure password and delete or change role for this user     
-        $user = new User([
-            
-            'name' => 'admin',
-            'patronymic' => 'asdasd',
-            'surname' => 'lknl',
-            'phone' => '380(48)424-44-34',
-            'password_hash' => '$2y$13$rirEXiQXjKaEVbwEbEM2H.Vkm2H1f8aBcRwGrDSDZCEG9cGVzxVm.', //111111
-            'status' => 10,
-            'role_id' => 1,
-        ]);
-        $user->generateAuthKey();
-        if($user->save()){
-            // Assign admin role to 
-            $auth->assign($adminRole, $user->getId());
-        }
+        $model = new SignupForm();
+        $model->name = 'admin';
+        $model->patronymic = 'asdasd';
+        $model->surname = 'lknl';
+        $model->phone = '380(48)424-44-34';
+        $model->password = '111111';
+        $model->role_id = User::USER_ADMIN_ROLE_ID; //admin role_id
+
+        if(!$model->save()){
+            return false;
+        }            
     }
     public function safeDown()
     {

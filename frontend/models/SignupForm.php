@@ -37,7 +37,7 @@ class SignupForm extends Model
 
             ['phone', 'trim'],
             ['phone', 'required'],
-            ['phone', 'string'],
+            ['phone', 'string', 'max' => 16, 'min' => 16],
             ['phone', 'unique', 'targetClass' => '\frontend\models\User', 'message' => 'This phone number has already been taken.'],
 
             ['password', 'required'],

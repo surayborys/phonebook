@@ -74,7 +74,7 @@ class User extends ActiveRecord implements IdentityInterface
 
             ['phone', 'trim'],
             ['phone', 'required'],
-            ['phone', 'string'],
+            ['phone', 'string', 'min' => 16, 'max' =>16],
             ['phone', 'unique', 'targetClass' => '\frontend\models\User', 'message' => 'This phone number has already been taken.'],
             
             ['birthdate', 'date', 'format' => 'php:Y-m-d'],

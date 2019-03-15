@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]) ?>
 
                 <?= $form->field($model, 'password')->passwordInput() ?>
-                <?= $form->field($model, 'role_id')->hiddenInput(['value'=>User::DEFAULT_USER_ROLE_ID]) ?>
+                <?= $form->field($model, 'role_id')->hiddenInput(['value'=>User::DEFAULT_USER_ROLE_ID])->label(false) ?>
 
                 <div class="form-group">
                     <?= Html::submitButton('Signup', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
