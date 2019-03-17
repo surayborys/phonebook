@@ -19,7 +19,7 @@ $this->title = 'My Yii Application';
     
     <?php /*show manage button only for admin users*/?>
     <?php if(!Yii::$app->user->isGuest  && (Yii::$app->user->identity->role_id != User::DEFAULT_USER_ROLE_ID)):?>
-    <a href="<?= Url::to('/user/manage')?>" class="btn btn-primary"><span class="glyphicon glyphicon-cog"></span>&nbsp;Manage</a>
+    <a href="<?= Url::to('/admin/user/manage')?>" class="btn btn-primary"><span class="glyphicon glyphicon-cog"></span>&nbsp;Manage</a>
     <?php endif; ?>
     
 </div>

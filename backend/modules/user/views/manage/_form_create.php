@@ -40,7 +40,7 @@ use backend\models\User;
     
     <?php /*non-admin user's of admin panel has permission to create only default user*/?>
     <?php if($role != User::USER_ADMIN_ROLE_ID):?>
-    <?= $form->field($model, 'role_id')->hiddenInput(['value'=>User::DEFAULT_USER_ROLE_ID]) ?>
+    <?= $form->field($model, 'role_id')->hiddenInput(['value'=>User::DEFAULT_USER_ROLE_ID])->label(false) ?>
     <?php endif;?>
     
     <div class="form-group">

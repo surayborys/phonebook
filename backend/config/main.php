@@ -7,6 +7,7 @@ $params = array_merge(
 );
 
 return [
+    'homeUrl' => '/admin',
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
@@ -18,6 +19,7 @@ return [
     ],
     'components' => [
         'request' => [
+            'baseUrl' => '/admin', 
             'csrfParam' => '_csrf-backend',
         ],
         'user' => [
