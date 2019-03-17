@@ -17,7 +17,7 @@
                     arg = arg.replace(/\-/g,'');
                     arg = arg.replace(/\(/g,'');
                     arg = arg.replace(/\)/g,'');
-                    window.location = "http://phnbookfront.com/abonent/search/" + arg;
+                    window.location = "/abonent/search/" + arg;
                 }
             });
         });

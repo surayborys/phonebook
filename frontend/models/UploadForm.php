@@ -20,7 +20,7 @@ class UploadForm extends Model
         ];
     }
     
-    public function upload(int $user_id, int $abonent_id)
+    public function upload($user_id, $abonent_id)
     {
         if ($this->validate()) {
             $prePath = $this->preparePath($user_id, $abonent_id);
@@ -32,7 +32,7 @@ class UploadForm extends Model
         }
     }
     
-    protected function preparePath(int $user_id, int $abonent_id) {
+    protected function preparePath($user_id, $abonent_id) {
         
         $path = 'uploads/users/' . $user_id . '/members/' . $abonent_id . '/';
         if(!is_dir($path)) {
