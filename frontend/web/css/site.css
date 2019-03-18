@@ -118,3 +118,27 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+/*file input button styles*/
+.file-input {
+    position: relative;
+    overflow: hidden;
+    margin: 6px 0 10px 0;
+    height: 34px;
+    width: 250px;   
+}
+
+.file-input input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 999px;
+    text-align: right;
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}

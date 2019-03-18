@@ -6,8 +6,6 @@ use yii\helpers\Html;
 /* @var $model frontend\models\Abonent */
 
 $this->title = 'Create Abonent';
-$this->params['breadcrumbs'][] = ['label' => 'Abonents', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="abonent-create">
 

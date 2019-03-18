@@ -6,9 +6,6 @@ use yii\helpers\Html;
 /* @var $model frontend\models\Abonent */
 
 $this->title = 'Update Abonent: ' . $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Abonents', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="abonent-update">
 

@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use Yii;
 use frontend\models\Group;
+use yii\helpers\FileHelper;
 
 /**
  * This is the model class for table "abonent".
@@ -23,12 +24,19 @@ use frontend\models\Group;
 class Abonent extends \yii\db\ActiveRecord
 {
     public $fullname;
+    public $imageFile;
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return 'abonent';
+    }
+    
+     //execute the savePhoto() method after inserting/updating of model
+    public function __construct() {
+        $this->on(self::EVENT_AFTER_INSERT, [$this, 'savePhoto']);
+        $this->on(self::EVENT_AFTER_UPDATE, [$this, 'savePhoto']);
     }
 
     /**
@@ -39,6 +47,7 @@ class Abonent extends \yii\db\ActiveRecord
         return [
             [['user_id', 'group_id'], 'integer'],
             [['phone', 'name'], 'required'],
+            [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             [['birthdate'], 'date', 'format' => 'php:Y-m-d'],
             [['name', 'patronymic', 'surname', 'photo'], 'string', 'max' => 255],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
@@ -62,6 +71,23 @@ class Abonent extends \yii\db\ActiveRecord
             'birthdate' => 'Birthdate',
         ];
     }
+    
+    /**
+     * uploads photo and assigns 'photo' attribute's value to the model
+     * 
+     * @return boolean
+     */
+    public function savePhoto(){
+        if($this->imageFile  && $this->photo = $this->upload($this->user_id, $this->getPrimaryKey())) {
+            //off the events to avoid infinite loop
+            $this->off(self::EVENT_AFTER_INSERT, [$this, 'savePhoto']);
+            $this->off(self::EVENT_AFTER_UPDATE, [$this, 'savePhoto']);
+            
+            return $this->save(false);
+        } 
+        return true;
+    }
+
 
     /**
      * @return \yii\db\ActiveQuery
@@ -92,10 +118,47 @@ class Abonent extends \yii\db\ActiveRecord
         return false;
     }
     
+    /**
+     * checks if the user has photo and returns path to photo or path to default profile image
+     * 
+     * @return string
+     */
     public function getPhoto() {
         if(isset($this->photo) && !empty($this->photo)) {
             return Yii::getAlias('@web'). '/' . $this->photo;
         }
         return Yii::$app->params['defaultProfileImage'];
+    }
+    
+    /**
+     * uploads image with specific name
+     * 
+     * @param int $user_id
+     * @param int $abonent_id
+     * @return boolean|string
+     */
+    public function upload($user_id, $abonent_id)
+    {
+        $prePath = $this->preparePath($user_id, $abonent_id);
+        $fullPath = $prePath . $this->imageFile->baseName . '.' . $this->imageFile->extension;
+        $this->imageFile->saveAs($fullPath);
+        return $fullPath;
+    }
+    
+    /**
+     * returns path to file like uploads/users/{$user_id}/members/{$abonent_id}
+     * and creates required folders if they don't exist
+     * 
+     * @param type $user_id
+     * @param type $abonent_id
+     * @return string
+     */
+    protected function preparePath($user_id, $abonent_id) {
+        
+        $path = 'uploads/users/' . $user_id . '/members/' . $abonent_id . '/';
+        if(!is_dir($path)) {
+            FileHelper::createDirectory($path);
+        }
+        return $path;
     }
 }

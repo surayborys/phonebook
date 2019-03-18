@@ -9,7 +9,6 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
-use frontend\models\UploadForm;
 use yii\web\UploadedFile;
 use yii\helpers\Html;
 use yii\filters\AccessControl;
@@ -39,7 +38,7 @@ class AbonentController extends Controller
                         },
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'upload', 'search', 'remove-photo'],
+                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'search', 'remove-photo'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -104,14 +103,21 @@ class AbonentController extends Controller
     {
         $model = new Abonent();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())){
+            
+            /**
+             * model saves file using event AFTER_INSERT 
+             */
+            $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+            if($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
-
         return $this->render('create', [
             'model' => $model,
         ]);
     }
+    
 
     /**
      * Updates an existing Abonent model.
@@ -126,10 +132,20 @@ class AbonentController extends Controller
         $model = $this->findModel($id);
         $this->checkPermissionByModelsUserId($model->user_id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            /*check if the file is uploaded*/
+            if($model->imageFile = UploadedFile::getInstance($model, 'imageFile')){
+                /* check if the model has 'photo' attribute */
+                $oldPhoto = $model->photo ? $model->photo : false;
+            }
+            if($model->save()) {
+                if(isset($oldPhoto) && $oldPhoto != false) {
+                    /* remove old photo */
+                    $this->deleteFile($oldPhoto);
+                } 
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
-
         return $this->render('update', [
             'model' => $model,
         ]);
@@ -179,38 +195,7 @@ class AbonentController extends Controller
             return $this->redirect(['index']);
         }
     }
-    
-    /**
-     * handles picture uploading 
-     * 
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionUpload($id)
-    {
-              
-        $abonent = $this->findModel($id);
-        if(isset($abonent->photo) & !empty($abonent->photo)){
-            $oldPhoto = $abonent->photo;
-        }
-        
-        $model = new UploadForm();
-
-        if (Yii::$app->request->isPost) {
-            $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
-            if ($photo = $model->upload(Yii::$app->user->id, $id)) {
-                // file is uploaded successfully
-                $abonent->photo = $photo;
-                if($abonent->save()&& isset($oldPhoto)) {
-                    $this->deleteFile($oldPhoto);
-                }
-                return $this->redirect(['abonent/view', 'id'=>$id]);
-            }
-        }
-
-        return $this->render('upload', ['model' => $model]);
-    }
-    
+  
     /**
      * deletes abonent's photo
      * 
@@ -235,12 +220,10 @@ class AbonentController extends Controller
      * @param type $file
      * @return boolean
      */
-    protected function deleteFile(string $file) {
+    protected function deleteFile($file) {
         
-        $filename = '/' . $file;
-        
-        if(file_exists($filename)) {
-            return unlink($filename);
+        if(file_exists($file)) {
+            return unlink($file);
         }
         return true;
     }
@@ -250,7 +233,7 @@ class AbonentController extends Controller
      * 
      * @param $keyword
      */
-    public function actionSearch(string $keyword) {
+    public function actionSearch($keyword) {
         
         $currentUser = Yii::$app->user->identity;
         $userID = Yii::$app->user->id;
@@ -258,8 +241,10 @@ class AbonentController extends Controller
         
         $keyword = Html::encode($keyword);
         
+        /*determine the search source based on kyword */
         $search_source = $this->determine_search_source($keyword);
         
+        /*execute matching search case*/
         if($search_source == 'fullname') {
             $query = Abonent::find()->where(['user_id' => $userID])->andfilterWhere(['like','concat(name, patronymic, surname)', $keyword]);
         }
@@ -292,7 +277,7 @@ class AbonentController extends Controller
      * @param $keyword
      * @return string
      */
-    protected function determine_search_source(string $keyword){
+    protected function determine_search_source($keyword){
         
         /* 380677777777 has 12 symbols */
         if(strlen($keyword) > 12) {
@@ -317,7 +302,7 @@ class AbonentController extends Controller
      * 
      * @param string $keyword
      */
-    protected function prepareStandardNumber(string $keyword) {
+    protected function prepareStandardNumber($keyword) {
         
         $length = strlen($keyword);
         
