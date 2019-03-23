@@ -63,12 +63,12 @@ class Abonent extends \yii\db\ActiveRecord
             'id' => 'ID',
             'user_id' => 'User ID',
             'group_id' => 'Group ID',
-            'name' => 'Name',
-            'patronymic' => 'Patronymic',
-            'surname' => 'Surname',
-            'phone' => 'Phone',
-            'photo' => 'Photo',
-            'birthdate' => 'Birthdate',
+            'name' => Yii::t('abonent/model', 'Name'),
+            'patronymic' => Yii::t('abonent/model', 'Patronymic'),
+            'surname' => Yii::t('abonent/model', 'Surname'),
+            'phone' => Yii::t('abonent/model', 'Phone'),
+            'photo' => Yii::t('abonent/model', 'Photo'),
+            'birthdate' => Yii::t('abonent/model', 'Birthdate'),    
         ];
     }
     

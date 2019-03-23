@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "136f6e8f62cca49b08580b44757a3781",
+    "content-hash": "d3d3b5a369cfce896ba33ab1f6b4ed08",
     "packages": [
         {
             "name": "2amigos/yii2-date-picker-widget",
@@ -72,7 +72,7 @@
             "version": "v3.4.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:twbs/bootstrap.git",
+                "url": "https://github.com/twbs/bootstrap.git",
                 "reference": "68b0d231a13201eb14acd3dc84e51543d16e5f7e"
             },
             "dist": {
@@ -93,12 +93,12 @@
             "version": "v1.7.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/uxsolutions/bootstrap-datepicker.git",
+                "url": "git@github.com:eternicode/bootstrap-datepicker.git",
                 "reference": "d364be5b066b38f3675a5a1dc174ce1ab1f3360e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/uxsolutions/bootstrap-datepicker/zipball/d364be5b066b38f3675a5a1dc174ce1ab1f3360e",
+                "url": "https://api.github.com/repos/eternicode/bootstrap-datepicker/zipball/d364be5b066b38f3675a5a1dc174ce1ab1f3360e",
                 "reference": "d364be5b066b38f3675a5a1dc174ce1ab1f3360e"
             },
             "require": {
@@ -108,6 +108,21 @@
             "license": [
                 "Apache-2.0"
             ]
+        },
+        {
+            "name": "bower-asset/flag-icon-css",
+            "version": "3.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lipis/flag-icon-css.git",
+                "reference": "b35a579e58c7fdc7c7358d1c4daade7887dc91eb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lipis/flag-icon-css/zipball/b35a579e58c7fdc7c7358d1c4daade7887dc91eb",
+                "reference": "b35a579e58c7fdc7c7358d1c4daade7887dc91eb"
+            },
+            "type": "bower-asset"
         },
         {
             "name": "bower-asset/inputmask",
@@ -243,6 +258,62 @@
                 "markdown-extra"
             ],
             "time": "2018-03-26T11:24:36+00:00"
+        },
+        {
+            "name": "cetver/yii2-language-selector",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cetver/yii2-language-selector.git",
+                "reference": "d4c4af50bb4df43f781e7d6b9ed649f0bb42e9cd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cetver/yii2-language-selector/zipball/d4c4af50bb4df43f781e7d6b9ed649f0bb42e9cd",
+                "reference": "d4c4af50bb4df43f781e7d6b9ed649f0bb42e9cd",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "^2.0.13"
+            },
+            "require-dev": {
+                "codeception/base": "^2.2.3",
+                "codeception/specify": "~0.4.3",
+                "codeception/verify": "~0.3.1",
+                "satooshi/php-coveralls": "^1.0"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "cetver\\LanguageSelector\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Alexandr Cetvertacov",
+                    "email": "cetver@gmail.com"
+                }
+            ],
+            "description": "Provides the configuration for the language selector for the Yii framework 2.0",
+            "keywords": [
+                "change",
+                "extension",
+                "i18n",
+                "internationalization",
+                "language",
+                "locale",
+                "pick",
+                "select",
+                "switch",
+                "toggle",
+                "url",
+                "yii2"
+            ],
+            "time": "2018-01-13T13:08:02+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -401,6 +472,48 @@
                 "html"
             ],
             "time": "2018-02-23T01:58:20+00:00"
+        },
+        {
+            "name": "powerkernel/yii2-flag-icon-css",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/powerkernel/yii2-flag-icon-css.git",
+                "reference": "1fa1abb10f22388f9ade7977dda967a5519e7047"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/powerkernel/yii2-flag-icon-css/zipball/1fa1abb10f22388f9ade7977dda967a5519e7047",
+                "reference": "1fa1abb10f22388f9ade7977dda967a5519e7047",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/flag-icon-css": "*",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "powerkernel\\flagiconcss\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Harry Tang",
+                    "email": "harry@powerkernel.com"
+                }
+            ],
+            "description": "flag-icon-css extension for Yii2",
+            "keywords": [
+                " flag-icon-css",
+                "extension",
+                "yii2"
+            ],
+            "time": "2017-11-29T07:04:44+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

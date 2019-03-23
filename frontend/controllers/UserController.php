@@ -13,6 +13,8 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\User;
+use yii\web\Cookie;
+use yii\web\Response;
 
 
 /**
@@ -184,4 +186,30 @@ class UserController extends Controller{
             'model' => $model,
         ]);
     }
+    
+    /**
+     * Change language
+     * @return mixed
+     */
+    public function actionLanguage($language)
+    {     
+        $supportedLanguages = Yii::$app->params['supportedLanguages'];
+                
+        //check if the language is supported
+        if(!in_array($language, $supportedLanguages)){
+            return $this->redirect(Yii::$app->request->referrer);
+        }
+        
+        Yii::$app->language = $language;
+
+        $languageCookie = new Cookie([
+            'name' => 'language',
+            'value' => $language,
+            'expire' => time() + 60 * 60 * 24 * 30, // 30 days
+        ]);
+        Yii::$app->response->cookies->add($languageCookie);
+            
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
 }

@@ -9,6 +9,8 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use yii\web\JqueryAsset;
+
 
 AppAsset::register($this);
 ?>
@@ -27,32 +29,60 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 
 <div class="wrap">
-    <?php
+    <?php    
+    
+    $en_ikon = \powerkernel\flagiconcss\Flag::widget([
+	    'tag' => 'span', // flag tag
+		'country' => 'us', // where xx is the ISO 3166-1-alpha-2 code of a country,
+		'squared' => false, // set to true if you want to have a squared version flag
+		'options' => [] // tag html options
+	]); 
+    
+    $uk_ikon = \powerkernel\flagiconcss\Flag::widget([
+	    'tag' => 'span', // flag tag
+		'country' => 'ua', // where xx is the ISO 3166-1-alpha-2 code of a country,
+		'squared' => false, // set to true if you want to have a squared version flag
+		'options' => [] // tag html options
+	]);
+    ?>
+    
+    <?php /*nav  bar*/
     NavBar::begin([
-        'brandLabel' => Yii::$app->params['appName'],
+        'brandLabel' => Yii::t('layout/main', Yii::$app->params['appName']),
         'brandUrl' => Yii::$app->params['appUrl'],
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
     
+    
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Signup', 'url' => ['/user/signup']];
-        $menuItems[] = ['label' => 'Login', 'url' => ['/user/login']];
+        $menuItems[] = ['label' => Yii::t('layout/main', 'Signup'), 'url' => ['/user/signup']];
+        $menuItems[] = ['label' => Yii::t('layout/main','Login'), 'url' => ['/user/login']];
     } else {
-        $menuItems[] = ['label' => 'Profile', 'url' => ['/user/view/']];
+        $menuItems[] = ['label' => Yii::t('layout/main','Profile'), 'url' => ['/user/view/']];
         $menuItems[] = '<li>'
             . Html::beginForm(['/user/logout'], 'post')
             . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->name . ')',
+                Yii::t('layout/main', 'Logout, {username}', [
+                    'username' => Yii::$app->user->identity->name
+                ]),
                 ['class' => 'btn btn-link logout']
             )
             . Html::endForm()
             . '</li>';
     }
+    
+    if(Yii::$app->language == 'uk-UA') {
+        $menuItems[] = '<li class="nav-item">' . '<a href="/user/language?language=en-US">' . 'switch to ' . $en_ikon . '</a>' . '</li>';
+    }
+    if(Yii::$app->language == 'en-US') {
+        $menuItems[] = '<li class="nav-item">' . '<a href="/user/language?language=uk-UA">' . 'перейти ' . $uk_ikon . '</a>' . '</li>';
+    }
+        
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItems,
+        'items' => $menuItems,  
     ]);
     NavBar::end();
     ?>
@@ -73,8 +103,11 @@ AppAsset::register($this);
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>
-
+<?php $this->registerJsFile('@web/js/clickLang.js', [
+    'depends' => JqueryAsset::className(),
+]); ?>
 <?php $this->endBody() ?>
+    
 </body>
 </html>
 <?php $this->endPage() ?>

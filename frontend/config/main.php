@@ -10,7 +10,12 @@ return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
     'homeUrl' => '/',
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+       'log',
+            [
+                'class' => 'frontend\components\LanguageSelector',
+            ],
+        ],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'request' => [
@@ -50,6 +55,18 @@ return [
                 '/group/removecontacts/<id:\w+>' => 'group/removecontacts',
             ],
         ],
+        'i18n' => [
+        'translations' => [
+            '*' => [
+                'class' => 'yii\i18n\PhpMessageSource',
+                'fileMap' => [
+                    'abonent/index'  => 'abonent/index.php',
+                    'abonent/model' => 'abonent/model.php',
+                    'layout/main' => 'layout/main.php',
+                ],
+            ],
+        ],
+    ],
     ],
     'params' => $params,
 ];
