@@ -9,7 +9,6 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
-use yii\web\JqueryAsset;
 
 
 AppAsset::register($this);
@@ -64,20 +63,19 @@ AppAsset::register($this);
         $menuItems[] = '<li>'
             . Html::beginForm(['/user/logout'], 'post')
             . Html::submitButton(
-                Yii::t('layout/main', 'Logout, {username}', [
-                    'username' => Yii::$app->user->identity->name
-                ]),
-                ['class' => 'btn btn-link logout']
+                '<span class="glyphicon glyphicon-off"></span>&nbsp;' .
+                Yii::t('layout/main', 'Logout') . '&nbsp;(' . Yii::$app->user->identity->name . ')',
+                    ['class' => 'btn btn-link logout']
             )
             . Html::endForm()
             . '</li>';
     }
     
     if(Yii::$app->language == 'uk-UA') {
-        $menuItems[] = '<li class="nav-item">' . '<a href="/user/language?language=en-US">' . 'switch to ' . $en_ikon . '</a>' . '</li>';
+        $menuItems[] = '<li class="nav-item">' . '<a href="/user/language?language=en-US">' . 'English ' . $en_ikon . '</a>' . '</li>';
     }
     if(Yii::$app->language == 'en-US') {
-        $menuItems[] = '<li class="nav-item">' . '<a href="/user/language?language=uk-UA">' . 'перейти ' . $uk_ikon . '</a>' . '</li>';
+        $menuItems[] = '<li class="nav-item">' . '<a href="/user/language?language=uk-UA">' . 'Українська ' . $uk_ikon . '</a>' . '</li>';
     }
         
     echo Nav::widget([
@@ -103,9 +101,7 @@ AppAsset::register($this);
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>
-<?php $this->registerJsFile('@web/js/clickLang.js', [
-    'depends' => JqueryAsset::className(),
-]); ?>
+
 <?php $this->endBody() ?>
     
 </body>

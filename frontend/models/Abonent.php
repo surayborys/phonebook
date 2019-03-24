@@ -33,10 +33,14 @@ class Abonent extends \yii\db\ActiveRecord
         return 'abonent';
     }
     
-     //execute the savePhoto() method after inserting/updating of model
+    //use events
     public function __construct() {
+        //execute the savePhoto() method after inserting/updating of model
         $this->on(self::EVENT_AFTER_INSERT, [$this, 'savePhoto']);
         $this->on(self::EVENT_AFTER_UPDATE, [$this, 'savePhoto']);
+        //execute the unmaskPhone() method before inserting/updating of model
+        $this->on(self::EVENT_BEFORE_INSERT, [$this, 'unmaskPhone']);
+        $this->on(self::EVENT_BEFORE_UPDATE, [$this, 'unmaskPhone']);
     }
 
     /**
@@ -87,7 +91,18 @@ class Abonent extends \yii\db\ActiveRecord
         } 
         return true;
     }
-
+    
+    /**
+     * takes off the input mask
+     * 
+     * uses the frontend\components\PhoneFormatter as custom extention of Yii::$app->formatter
+     * @return string
+     */
+    public function unmaskPhone(){
+        
+        $this->phone = Yii::$app->formatter->asUnmaskedNumber($this->phone);
+        return true;
+    }
 
     /**
      * @return \yii\db\ActiveQuery

@@ -44,7 +44,13 @@ $this->title = $model->name;
             'name',
             'patronymic',
             'surname',
-            'phone',
+            [
+                'attribute'=>'phone',
+                'format' => 'html',
+                'value'=>function($ab){
+                    return Yii::$app->formatter->asPhone($ab->phone);
+                }
+            ],
             //'photo',
             'birthdate',
         ],

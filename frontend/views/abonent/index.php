@@ -1,25 +1,17 @@
- <?php
+<?php
 /* @var $this yii\web\View */
 /* @var $currentUser frontend\models\User */
-/* @var $SearchForm frontend\models\SearchForm */
 /* @var $abonents[] frontend\model\Abonent */
 /* @var $groups[] frontend\model\Group */
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\web\JqueryAsset;
+use kartik\date\DatePicker;
 
 
 $this->title = Yii::t('abonent/index', 'Phone Book');
 ?>
 <div class="site-index">
-
-    <!--div class="jumbotron">
-        <h1>Welcome to your phone book</h1> 
-
-        <p class="lead">Register to create your profile or click GO if you've already been registered.</p>
-
-        <p><a class="btn btn-lg btn-success" href="#">GO!</a></p>
-    </div-->
 
     <div class="body-content">
 
@@ -42,14 +34,43 @@ $this->title = Yii::t('abonent/index', 'Phone Book');
         <div class="col-md-10">
             <div class="abonent-index">
 
-                <h3><span class="glyphicon glyphicon-user"></span>&nbsp;<?= Yii::t('abonent/index', 'Contacts');?>   
+                <h2><span class="glyphicon glyphicon-user"></span>&nbsp;<?= Yii::t('abonent/index', 'Contacts');?>   
                  <?= Yii::t('abonent/index', Html::a('<span class="glyphicon glyphicon-plus"></span>&nbsp;' . Yii::t('abonent/index', 'Add contact'), ['create'], ['class' => 'btn btn-primary']) ); ?>
-                </h3>
-                
+                </h2>
+                               
                 <form class="form form-inline form-group">
-                    <input class="form-control" type="text" name = "fullname"  placeholder="<?= Yii::t('abonent/index', 'type to search');?>" id="keyword">
-                    <a class="btn btn-default" id="search-id"><span class="glyphicon glyphicon-search"></span></a>
-                    <p class="text-danger" id="error-id"></p>
+                    <fieldset class="form-group">
+                        <hr>
+                        <p>
+                            <span class="glyphicon glyphicon-filter"></span><?= Yii::t('abonent/index', 'Filter')?>
+                            <a class="btn btn-default btn-sm" id="filter-id">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                <?= Yii::t('abonent/index', 'use filter')?>
+                            </a>
+                            <a class="btn btn-default btn-sm" href="/">
+                                <span class="glyphicon glyphicon-remove"></span>
+                                <?= Yii::t('abonent/index', 'cancel filter')?>
+                            </a>
+                        </p>
+                          <div class="form-group row">
+                            <input class="form-control" type="text" name = "fullname"  placeholder="<?= Yii::t('abonent/index', 'name');?>" id="f_name">
+                            <input class="form-control" type="text" name = "phone"  placeholder="<?= Yii::t('abonent/index', 'phone');?>" id="f_phone">
+                            <!--input class="form-control" type="text" name = "birthdate"  placeholder="<?//= Yii::t('abonent/index', 'date');?>" id="f_date"-->
+                            <?= DatePicker::widget([
+                                'name' => 'birthdate',
+                                'id'=>"f_date",
+                                'value' => '',
+                                'options' => ['placeholder' => Yii::t('abonent/index', 'birthdate')],
+                                'pluginOptions' => [
+                                        'autoclose' => true,
+                                        'viewMode' => "days",
+                                        'format' => 'yyyy-mm-dd'
+                                ]
+        ]);                 ?>
+                            <input class="form-control" type="text" name = "group"  placeholder="<?= Yii::t('abonent/index', 'group');?>" id="f_group">
+                          </div>
+                        </fieldset>
+                    <p class="text-danger" id="filter-error-id"></p>
                 </form>
                    
 
@@ -72,7 +93,13 @@ $this->title = Yii::t('abonent/index', 'Phone Book');
                         'name',
                         'patronymic',
                         'surname',
-                        'phone',
+                        [
+                            'attribute'=>'phone',
+                            'format' => 'html',
+                            'value'=>function($ab){
+                                return Yii::$app->formatter->asPhone($ab->phone);
+                            }
+                        ],
                         [
                             'attribute' => 'group',
                             'label' => Yii::t('abonent/model', 'Group'),
@@ -82,7 +109,13 @@ $this->title = Yii::t('abonent/index', 'Phone Book');
                             }
                         ],
                         //'photo',
-                        'birthdate',
+                        [
+                            'attribute'=>'birthdate',
+                            'format' => 'html',
+                            'value'=>function($ab){
+                                return Yii::$app->formatter->asDate($ab->birthdate, 'long');
+                            }
+                        ],
                         ['class' => 'yii\grid\ActionColumn'],
                     ],
                 ]);
@@ -94,5 +127,9 @@ $this->title = Yii::t('abonent/index', 'Phone Book');
 </div>
 
 <?php $this->registerJsFile('@web/js/clickSearch.js', [
+    'depends' => JqueryAsset::className(),
+]); ?>
+
+<?php $this->registerJsFile('@web/js/clickFilter.js', [
     'depends' => JqueryAsset::className(),
 ]); ?>

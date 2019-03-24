@@ -22,6 +22,9 @@ return [
             'baseUrl' => '',
             'csrfParam' => '_csrf-frontend',
         ],
+        'formatter' => [
+            'class' => '\frontend\components\PhoneFormatter',
+        ],
         'user' => [
             'identityClass' => 'frontend\models\User',
             'enableAutoLogin' => true,

@@ -38,7 +38,7 @@ class AbonentController extends Controller
                         },
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'search', 'remove-photo'],
+                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'search', 'remove-photo', 'filter'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -118,8 +118,7 @@ class AbonentController extends Controller
         ]);
     }
     
-
-    /**
+        /**
      * Updates an existing Abonent model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
@@ -272,59 +271,50 @@ class AbonentController extends Controller
     }
     
     /**
-     * analyses keyword and determines the source for search
+     * performs filtering by name, phone, birthdate and group
      * 
      * @param $keyword
-     * @return string
      */
-    protected function determine_search_source($keyword){
+    public function actionFilter($name = '', $phone = '', $date = '', $group = '') {
         
-        /* 380677777777 has 12 symbols */
-        if(strlen($keyword) > 12) {
-            return 'fullname';
+        //get logged-in user properties
+        $currentUser = Yii::$app->user->identity;
+        $userID = Yii::$app->user->id;
+        $groups = $currentUser->getGroups();
+        
+        //escape user input        
+        $args = ['name', 'phone', 'date', 'group'];
+        foreach($args as $arg){
+            $$arg = Html::encode($$arg);
         }
         
-        /* check if the given keyword mathces with phone number */
-        $pattern_number = "~[0-9]{7,12}~";
+        //remove non-number characters from the phone number
+        $phone = Yii::$app->formatter->asUnmaskedNumber($phone);     
         
-        if(preg_match($pattern_number, $keyword))
-        {
-            return 'phone';
-        }
-        
-        //return fullname by default
-        return 'fullname';
-    }
-    
-    /**
-     * formats phone number according to database requirements
-     * 380(55)555-55-55
-     * 
-     * @param string $keyword
-     */
-    protected function prepareStandardNumber($keyword) {
-        
-        $length = strlen($keyword);
-        
-        switch ($length) {
-            case 7:
-                $keyword = substr_replace($keyword, '-', -2, 0); //now length is 8
-                $keyword = substr_replace($keyword, '-', -5, 0); //now length is 9
-                return $keyword;
-            
-            case ($length == 8 || $length == 9) :
-                $keyword = substr_replace($keyword, '-', -2, 0); //now length is 8
-                $keyword = substr_replace($keyword, '-', -5, 0); //now length is 9
-                $keyword = substr_replace($keyword, ')', -9, 0); //now length is 10
-                return $keyword;
-            case ( $length > 9) :
-                $keyword = substr_replace($keyword, '-', -2, 0); //now length is 8
-                $keyword = substr_replace($keyword, '-', -5, 0); //now length is 9
-                $keyword = substr_replace($keyword, ')', -9, 0); //now length is 10
-                $keyword = substr_replace($keyword, '(', -12, 0); //now length is 10
-                return $keyword;
-        }
+        //build juery as a select from 'abonent' table left join 'group' table
+        $query = Abonent::find()->leftJoin('group', '`abonent`.`group_id`=`group`.`id`')->where(['`abonent`.`user_id`' => $userID
+                ])->andFilterWhere([
+                    'like', 'concat(`abonent`.`name`, `abonent`.`patronymic`, `abonent`.`surname`)', $name
+                ])->andFilterWhere([
+                    'like', '`abonent`.`phone`', $phone
+                ])->andFilterWhere([
+                    'like', '`abonent`.`birthdate`', $date
+                ])->andFilterWhere([
+                    'like', '`group`.`title`', $group
+                ]);
         
         
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 9,
+            ],
+        ]);
+        
+        return $this->render('index', [
+            'currentUser' => $currentUser,
+            'dataProvider' => $dataProvider,
+            'groups' => $groups,
+        ]);
     }
 }
